@@ -8,6 +8,7 @@ const s3 = new aws.S3({
 });
 
 export default async function handler(req, res) {
+  console.log(req);
   const { filename, filetype } = req.query;
 
   const params = {
