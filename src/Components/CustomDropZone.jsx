@@ -32,18 +32,41 @@ function CustomDropZone() {
     setFiles(prev => [...prev, ...newFiles]);
   }, []);
 
-  const uploadFile = (fileItem) => {
-    return new Promise((resolve, reject) => {
-      const uploadTime = Math.random() * 2000 + 1000;
-      setTimeout(() => {
-        if (Math.random() > 0.2) {
-          resolve(fileItem);
-        } else {
-          reject(new Error('Upload failed'));
-        }
-      }, uploadTime);
-    });
+  const uploadFile = async (file) => {
+    try {
+      // Step 1: Get presigned URL from your serverless function
+      const filename = encodeURIComponent(file.name);
+      const uniqueFilename = `${Date.now()}-${filename}`;
+      const filetype = encodeURIComponent(file.type);
+      const res = await fetch(`/api/getpresignedurl?filename=${filename}&filetype=${filetype}`);
+  
+      if (!res.ok) {
+        throw new Error('Failed to get upload URL');
+      }
+  
+      const { url } = await res.json();
+  
+      // Step 2: Upload the file to S3 using the presigned URL
+      const uploadRes = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': file.type,
+        },
+        body: file.file,
+      });
+  
+      if (!uploadRes.ok) {
+        throw new Error('Upload to S3 failed');
+      }
+  
+      // ✅ Success — file is uploaded
+      return { success: true, fileUrl: url.split('?')[0] }; // the S3 file URL
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: err.message };
+    }
   };
+  
 
   const triggerUpload = () => {
     if (files.length === 0 || startUpload) return;
