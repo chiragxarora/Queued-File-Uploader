@@ -1,12 +1,97 @@
-# React + Vite
+# 🗂️ React File Uploader to AWS S3 (Presigned URLs)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A drag-and-drop file uploader built with React and Polaris UI that directly uploads files to an Amazon S3 bucket using presigned URLs. Supports concurrent uploads, retry logic, and upload status tracking (Pending, Uploading, Uploaded, Failed).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔧 Features
 
-## Expanding the ESLint configuration
+- ✅ Drag & drop file uploads
+- ✅ AWS S3 presigned URL integration
+- ✅ Retry mechanism for failed uploads
+- ✅ Parallel uploads (configurable concurrency)
+- ✅ Upload status grouping: Pending, Uploading, Uploaded, Failed
+- ✅ Modular & clean code with hooks and reusable components
+- ✅ Polaris UI for consistent and responsive styling
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 📁 Project Structure
+
+```
+📦 your-project/
+ ┣ 📂src/
+ ┃ ┣ 📜main.jsx               # App entry point
+ ┃ ┣ 📜CustomDropZone.jsx     # UI and state manager
+ ┃ ┣ 📜FileListPanel.jsx      # Reusable file list section
+ ┃ ┣ 📜useFileUploader.js     # Upload logic: concurrency, retries
+ ┣ 📂api/
+ ┃ ┗ 📜getpresignedurl.js     # Serverless API to get S3 presigned URLs
+ ┣ 📜index.html
+ ┣ 📜README.md
+ ┗ 📜vite.config.js
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/your-username/s3-uploader.git
+cd s3-uploader
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment (For Serverless API)
+
+Make sure you have environment variables set (locally or on your deployment platform):
+
+```env
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=eu-north-1
+S3_BUCKET_NAME=queued-files-bucket
+```
+
+> These are used in `getpresignedurl.js` to generate S3 URLs.
+
+---
+
+## 🧪 Usage
+
+1. Start the development server:
+
+```bash
+npm run dev
+```
+
+2. Drag files into the drop zone.
+3. Click **"Start Upload"**.
+4. Track file status under:
+   - **Pending**
+   - **Uploading**
+   - **Uploaded**
+   - **Failed**
+
+Files should appear in your S3 bucket upon successful upload.
+
+---
+
+## 🔁 Retry Logic
+
+Each file is retried up to 3 times if the upload fails. Failed uploads are tracked and displayed in the UI.
+
+---
+
+## 📡 Serverless API – `/api/getpresignedurl.js`
+
+This endpoint receives a `filename` and `filetype` and returns a secure, temporary S3 presigned URL for uploading the file.
+
+---
