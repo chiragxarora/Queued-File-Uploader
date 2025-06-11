@@ -1,5 +1,4 @@
 import aws from 'aws-sdk';
-import 'dotenv/config';
 
 const s3 = new aws.S3({
   region: process.env.AWS_REGION,
