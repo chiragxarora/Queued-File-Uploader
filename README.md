@@ -56,8 +56,8 @@ Make sure you have environment variables set (locally or on your deployment plat
 ```env
 AWS_ACCESS_KEY_ID=your-access-key
 AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_REGION=eu-north-1
-S3_BUCKET_NAME=queued-files-bucket
+AWS_REGION=aws-region-code
+S3_BUCKET_NAME=s3-bucket-name
 ```
 
 > These are used in `getpresignedurl.js` to generate S3 URLs.
