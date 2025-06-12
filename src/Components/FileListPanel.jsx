@@ -53,9 +53,17 @@ export function FileListPanel({ title, files, showDownload = false }) {
                   <Button
                     url={window.URL.createObjectURL(file.file)}
                     download={file.name}
-                    size="slim"
-                    variant="plain"
+                    size="medium"
                     icon={CircleDownIcon}
+                    style={{
+                      height: '40px',
+                      width: '40px',
+                      minWidth: '40px',
+                      padding: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
                   />
                 )}
               </InlineStack>

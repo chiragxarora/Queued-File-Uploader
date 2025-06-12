@@ -18,21 +18,23 @@ export function useFileUploader(uploadFileFn, maxConcurrentUploads = 3) {
       setFiles(prev => prev.filter(f => f.id !== fileItem.id));
 
       const process = async () => {
-        const maxAttempts = 3;
-        let success = false;
+        try {
+          await uploadFileFn(fileItem);
+          setUploaded(prev => [...prev, fileItem]);
+        } catch {
+          const currentRetry = retriesRef.current[fileItem.id] || 0;
+          retriesRef.current[fileItem.id] = currentRetry + 1;
 
-        while ((retriesRef.current[fileItem.id] || 0) < maxAttempts && !success) {
-          try {
-            await uploadFileFn(fileItem);
-            success = true;
-          } catch {
-            retriesRef.current[fileItem.id] = (retriesRef.current[fileItem.id] || 0) + 1;
+          if (retriesRef.current[fileItem.id] < 3) {
+            // Push the file to the end of the queue to retry later
+            setFiles(prev => [...prev, fileItem]);
+          } else {
+            setFailed(prev => [...prev, fileItem]);
           }
+        } finally {
+          // Always remove from processing after attempt
+          setProcessing(prev => prev.filter(f => f.id !== fileItem.id));
         }
-
-        setProcessing(prev => prev.filter(f => f.id !== fileItem.id));
-        if (success) setUploaded(prev => [...prev, fileItem]);
-        else setFailed(prev => [...prev, fileItem]);
       };
 
       process();

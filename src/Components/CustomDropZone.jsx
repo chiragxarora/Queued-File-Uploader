@@ -1,13 +1,9 @@
 import {
   Box,
-  Button,
   DropZone,
   BlockStack,
-  InlineStack,
   Icon,
   Text,
-  Thumbnail,
-  Card,
 } from '@shopify/polaris';
 import { UploadIcon } from '@shopify/polaris-icons';
 import { useCallback } from 'react';
@@ -30,7 +26,6 @@ function CustomDropZone() {
     uploaded,
     failed,
     setFiles,
-    triggerUpload,
   } = useFileUploader(uploadFile);
 
   const handleDrop = useCallback((_dropFiles, acceptedFiles) => {
@@ -61,7 +56,6 @@ function CustomDropZone() {
   outline
   onDrop={handleDrop}
   type="file"
-  label="Upload files"
 >
   <Box
     padding="600"
