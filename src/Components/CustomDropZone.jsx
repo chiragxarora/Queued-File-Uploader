@@ -1,12 +1,20 @@
 import {
   Box,
   Button,
-  DropZone
+  DropZone,
+  BlockStack,
+  InlineStack,
+  Icon,
+  Text,
+  Thumbnail,
+  Card,
 } from '@shopify/polaris';
+import { UploadIcon } from '@shopify/polaris-icons';
 import { useCallback } from 'react';
 import { FileListPanel } from './FileListPanel';
 import { useFileUploader } from '../hooks/useFileUploader';
 import { getPresignedUrl, uploadToS3 } from '../services/uploadService';
+import { StatsPanel } from './StatsPanel';
 
 function CustomDropZone() {
   const uploadFile = async (fileItem) => {
@@ -37,39 +45,41 @@ function CustomDropZone() {
   }, [setFiles]);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Box width="50%" padding="500" background="bg-surface">
-        <DropZone onDrop={handleDrop}>
-          {!files.length && <DropZone.FileUpload />}
-        </DropZone>
-
-        <Box marginTop="400">
-          <Button fullWidth primary onClick={triggerUpload}>
-            Start Upload
-          </Button>
+    <Box padding="600" background="bg-surface">
+      {/* Header + Dropzone + Stats + Files List */}
+      <BlockStack gap="300">
+        {/* Header */}
+        <Box paddingBlockEnd="400">
+          <Text variant="heading2xl" as="h1" alignment="center">Smart File Uploader</Text>
+          <Text alignment="center" tone="subdued">Drag files or click to upload. See live status & preview!</Text>
         </Box>
 
-        {processing.length > 0 && (
-          <Box marginTop="400">
-            <FileListPanel title="Uploading" files={processing} />
+        {/* Drop Area */}
+        <DropZone onDrop={handleDrop}>
+          <Box padding="400" style={{ textAlign: 'center' }}>
+            <BlockStack gap="200" alignment="center">
+              <Icon source={UploadIcon} tone="subdued" />
+              <Text variant="bodyLg" tone="subdued">Drag and drop files here or click to upload</Text>
+              <Button onClick={triggerUpload} primary>Start Upload</Button>
+            </BlockStack>
           </Box>
-        )}
-      </Box>
+        </DropZone>
 
-      <Box width="50%" padding="500" background="bg-surface" borderLeftColor="border" borderLeftWidth="1">
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            <FileListPanel title="Pending" files={files} />
-          </div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            <FileListPanel title="Uploaded" files={uploaded} />
-          </div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            <FileListPanel title="Failed" files={failed} />
-          </div>
-        </div>
-      </Box>
-    </div>
+        {/* Stats Panel */}
+        <StatsPanel
+          total={files.length + processing.length + uploaded.length + failed.length}
+          inQueue={files.length}
+          uploading={processing.length}
+          uploaded={uploaded.length}
+          failed={failed.length}
+        />
+
+        {/* Uploaded Files List */}
+        <Box>
+          <FileListPanel title="Uploaded Files" files={uploaded} showDownload />
+        </Box>
+      </BlockStack>
+    </Box>
   );
 }
 
