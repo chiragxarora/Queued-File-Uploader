@@ -5,17 +5,10 @@ export function useFileUploader(uploadFileFn, maxConcurrentUploads = 3) {
   const [processing, setProcessing] = useState([]);
   const [uploaded, setUploaded] = useState([]);
   const [failed, setFailed] = useState([]);
-  const [startUpload, setStartUpload] = useState(false);
   const retriesRef = useRef({});
 
-  const triggerUpload = () => {
-    if (files.length > 0 && !startUpload) {
-      setStartUpload(true);
-    }
-  };
-
   useEffect(() => {
-    if (!startUpload || files.length === 0 || processing.length >= maxConcurrentUploads) return;
+    if (files.length === 0 || processing.length >= maxConcurrentUploads) return;
 
     const slots = maxConcurrentUploads - processing.length;
     const nextBatch = files.slice(0, slots);
@@ -44,14 +37,13 @@ export function useFileUploader(uploadFileFn, maxConcurrentUploads = 3) {
 
       process();
     });
-  }, [files, processing, startUpload]);
+  }, [files, processing, uploadFileFn, maxConcurrentUploads]);
 
   return {
     files,
     processing,
     uploaded,
     failed,
-    setFiles,
-    triggerUpload,
+    setFiles
   };
 }

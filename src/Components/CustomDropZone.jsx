@@ -34,15 +34,17 @@ function CustomDropZone() {
   } = useFileUploader(uploadFile);
 
   const handleDrop = useCallback((_dropFiles, acceptedFiles) => {
-    const newFiles = acceptedFiles.map(file => ({
-      file,
-      id: `${Date.now()}-${Math.random()}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
-    setFiles(prev => [...prev, ...newFiles]);
-  }, [setFiles]);
+  const newFiles = acceptedFiles.map(file => ({
+    file,
+    id: `${Date.now()}-${Math.random()}`,
+    name: file.name,
+    size: file.size,
+    type: file.type,
+  }));
+
+  setFiles(prev => [...prev, ...newFiles]);
+}, [setFiles]);
+
 
   return (
     <Box padding="600" background="bg-surface">
@@ -55,15 +57,38 @@ function CustomDropZone() {
         </Box>
 
         {/* Drop Area */}
-        <DropZone onDrop={handleDrop}>
-          <Box padding="400" style={{ textAlign: 'center' }}>
-            <BlockStack gap="200" alignment="center">
-              <Icon source={UploadIcon} tone="subdued" />
-              <Text variant="bodyLg" tone="subdued">Drag and drop files here or click to upload</Text>
-              <Button onClick={triggerUpload} primary>Start Upload</Button>
-            </BlockStack>
-          </Box>
-        </DropZone>
+        <DropZone
+  outline
+  onDrop={handleDrop}
+  type="file"
+  label="Upload files"
+>
+  <Box
+    padding="600"
+    background="bg-surface"
+    minHeight="300px"
+    style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign: 'center',
+    }}
+  >
+    <BlockStack gap="300" alignment="center">
+      <Icon source={UploadIcon} tone="subdued" />
+      <Text variant="headingSm" tone="subdued">
+        Drag and drop files here, or click to select
+      </Text>
+      <Text tone="subdued" variant="bodySm">
+        Supported formats: PNG, JPG, PDF, etc.
+      </Text>
+    </BlockStack>
+  </Box>
+</DropZone>
+
+
 
         {/* Stats Panel */}
         <StatsPanel
